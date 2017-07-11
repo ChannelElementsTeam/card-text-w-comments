@@ -1,0 +1,178 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../distributed-state-controller/distributed-state-controller.html">
+
+<dom-module id="card-text-w-comments-composer">
+  <template>
+    <style>
+      .container {
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -ms-flex-direction: row;
+        -webkit-flex-direction: row;
+        flex-direction: row;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+        padding: 10px 3px;
+      }
+
+      .flex {
+        -ms-flex: 1 1 0.000000001px;
+        -webkit-flex: 1;
+        flex: 1;
+        -webkit-flex-basis: 0.000000001px;
+        flex-basis: 0.000000001px;
+      }
+
+      .buttonPanel {
+        padding-left: 15px;
+      }
+
+      input {
+        outline: none;
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        border-bottom: 3px solid #e5e5e5;
+        background: transparent;
+        font-size: 16px;
+        font-weight: 300;
+        font-family: "Roboto", sans-serif;
+        padding: 10px 5px;
+        color: #000;
+      }
+    </style>
+    <div class="container">
+      <div class="flex" style="position: relative;">
+        <input id="txt" placeholder="Enter your message here" on-keydown="onKeydown">
+      </div>
+      <div class="buttonPanel">
+        <paper-button on-click="onSend" raised>Send</button>
+      </div>
+    </div>
+  </template>
+  <script>
+    class CardTextWCommentsComposer extends Polymer.Element {
+      static get is() { return 'card-text-w-comments-composer'; }
+      static get properties() {
+        return {
+          channel: Object
+        };
+      }
+      onKeydown(event) {
+        if (event.keyCode === 13) {
+          this.onSend();
+        }
+      }
+      onSend() {
+        const message = this.$.txt.value.trim();
+        if (message.length > 0) {
+          this.channel.sendCard(this, { json: { message: message, comments: [] } }, true, false);
+        }
+      }
+    }
+    window.customElements.define(CardTextWCommentsComposer.is, CardTextWCommentsComposer);
+  </script>
+</dom-module>
+
+<dom-module id="card-text-w-comments-viewer">
+  <template>
+    <style>
+      .card:hover {
+        background-color: #f8f8f8;
+        cursor: pointer;
+      }
+
+      .commentArea {
+        margin-left: 15px;
+        font-size: 85%;
+        color: #aaa;
+      }
+
+      #commentEntryArea {
+        margin-top: 8px;
+      }
+
+      #comment {
+        margin-left: 15px;
+        width: 80%;
+        font-size: 14px;
+      }
+    </style>
+    <div>
+      <div class="card" on-click="onCardClick">
+        <div>{{data.message}}</div>
+        <div class="commentArea">
+          <template is="dom-repeat" items="{{data.comments}}">
+            <div><span>{{item.name}}<span>: <span>{{item.message}}</span></div>
+          </template>
+        </div>
+      </div>
+      <div id="commentEntryArea">
+        <input id="comment" placeholder="Enter your comment and hit ENTER" on-keydown="onCommentKeydown" on-blur="onCommentBlur">
+      </div>
+    </div>
+  </template>
+  <script>
+    class CardTextWCommentsViewer extends Polymer.Element {
+      static get is() { return 'card-text-w-comments-viewer'; }
+      static get properties() {
+        return {
+          data: Object,
+          channel: Object
+        };
+      }
+      constructor() {
+        super();
+        this.set('data', { message: "Hello world, this is a message.", comments: [] });
+        this.stateController = new DistributedStateController();
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        this.$.commentEntryArea.style.display = 'none';
+        this.stateController.initialize(this, this.data);
+        this.splice('data.comments', 0, 0, { name: "Bob", message: "I don't agree." });
+        this.splice('data.comments', 1, 0, { name: "Carol", message: "Me, too." });
+      }
+      onCardClick(event) {
+        this.$.commentEntryArea.style.display = this.$.commentEntryArea.style.display === 'none' ? '' : 'none';
+      }
+      onCommentKeydown(event) {
+        if (event.keyCode === 13) {
+          const comment = this.$.comment.value.trim();
+          if (comment.length > 0) {
+            const item = {
+              name: 'name-goes-here',
+              message: comment
+            };
+            this.stateController.arrayInsert('comments', item);
+            this.$.comment.value = '';
+            this.$.commentEntryArea.style.display = 'none';
+          }
+        }
+      }
+      onCommentBlur(event) {
+        this.$.comment.value = '';
+        this.$.commentEntryArea.style.display = 'none';
+      }
+      handleCardToCardMessageReceived(participant, message) {
+        switch (message.json.type) {
+          case 'mutation':
+            this.stateController.handleInboundMutation(message.json.details, message);
+            break;
+          default:
+            break;
+        }
+      }
+      sendMutation(mutation) {
+        return this.channel.sendCardToCardMessage(this, { json: { type: "mutation", details: mutation } }, true, false);
+      }
+      spliceArray(path, index, removeCount, record) {
+        this.splice(path, index, removeCount, record);
+      }
+    }
+    window.customElements.define(CardTextWCommentsViewer.is, CardTextWCommentsViewer);
+  </script>
+</dom-module>

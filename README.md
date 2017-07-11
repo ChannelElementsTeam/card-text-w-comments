@@ -1,2 +1,21 @@
-# card-text-w-comments
-A Channels card that allows composer to send text and then all participants to add comments to it
+# \<card-text-w-comments\>
+
+A Channels card that allows text message with comments from anyone
+
+## Install the Polymer-CLI
+
+First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your element locally.
+
+## Viewing Your Element
+
+```
+$ polymer serve
+```
+
+## Running Tests
+
+```
+$ polymer test
+```
+
+Your application is already set up to be tested via [web-component-tester](https://github.com/Polymer/web-component-tester). Run `polymer test` to run your application's test suite locally.
