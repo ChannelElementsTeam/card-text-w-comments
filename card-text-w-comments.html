@@ -126,25 +126,28 @@
       }
       constructor() {
         super();
-        this.set('data', { message: "Hello world, this is a message.", comments: [] });
         this.stateController = new DistributedStateController();
       }
       connectedCallback() {
         super.connectedCallback();
         this.$.commentEntryArea.style.display = 'none';
         this.stateController.initialize(this, this.data);
-        this.splice('data.comments', 0, 0, { name: "Bob", message: "I don't agree." });
-        this.splice('data.comments', 1, 0, { name: "Carol", message: "Me, too." });
       }
       onCardClick(event) {
-        this.$.commentEntryArea.style.display = this.$.commentEntryArea.style.display === 'none' ? '' : 'none';
+        if (this.$.commentEntryArea.style.display === 'none') {
+          this.$.commentEntryArea.style.display = '';
+          this.$.comment.focus();
+        } else {
+          this.$.commentEntryArea.style.display = 'none';
+          this.$.comment.value = '';
+        }
       }
       onCommentKeydown(event) {
         if (event.keyCode === 13) {
           const comment = this.$.comment.value.trim();
           if (comment.length > 0) {
             const item = {
-              name: 'name-goes-here',
+              name: this.channel.me.identity.details.name,
               message: comment
             };
             this.stateController.arrayInsert('comments', item);
@@ -170,7 +173,7 @@
         return this.channel.sendCardToCardMessage(this, { json: { type: "mutation", details: mutation } }, true, false);
       }
       spliceArray(path, index, removeCount, record) {
-        this.splice(path, index, removeCount, record);
+        this.splice("data." + path, index, removeCount, record);
       }
     }
     window.customElements.define(CardTextWCommentsViewer.is, CardTextWCommentsViewer);
