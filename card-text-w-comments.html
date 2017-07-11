@@ -70,6 +70,7 @@
         const message = this.$.txt.value.trim();
         if (message.length > 0) {
           this.channel.sendCard(this, { json: { message: message, comments: [] } }, true, false);
+          this.$.txt.value = '';
         }
       }
     }
@@ -147,7 +148,7 @@
           const comment = this.$.comment.value.trim();
           if (comment.length > 0) {
             const item = {
-              name: this.channel.me.identity.details.name,
+              name: this.channel.me && this.channel.me.identity && this.channel.me.identity.details && this.channel.me.identity.details.name ? this.channel.me.identity.details.name.split(' ')[0] : '',
               message: comment
             };
             this.stateController.arrayInsert('comments', item);
