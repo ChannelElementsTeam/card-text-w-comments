@@ -148,7 +148,7 @@
           const comment = this.$.comment.value.trim();
           if (comment.length > 0) {
             const item = {
-              name: this.channel.me && this.channel.me.identity && this.channel.me.identity.details && this.channel.me.identity.details.name ? this.channel.me.identity.details.name.split(' ')[0] : '',
+              name: this.channel.me && this.channel.me.details && this.channel.me.details.name ? this.channel.me.details.name.split(' ')[0] : '',
               message: comment
             };
             this.stateController.arrayInsert('comments', item);
