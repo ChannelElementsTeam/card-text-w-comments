@@ -1,4 +1,17 @@
 {
   "composerTag": "card-text-w-comments-composer",
-  "viewerTag": "card-text-w-comments-viewer"
+  "viewerTag": "card-text-w-comments-viewer",
+  "name": "Text with Comments",
+  "categories": [
+    "text/plain",
+    "comments/text",
+    "samples/collaboration"
+  ],
+  "websiteUrl": "https://github.com/ChannelElementsTeam/card-text-w-comments",
+  "description": "A simple text message supporting comments from other participants",
+  "iconUrl": "images/icon.png",
+  "price": 0.005,
+  "requestsPayment": false,
+  "offersPayment": false,
+  "collaborative": true
 }
