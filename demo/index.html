@@ -4,13 +4,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
-
   <title>card-text-w-comments demo</title>
-
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-
+  <link rel="import" href="../../polymer-channels-card/channels-card-demo-helper.html">
   <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
   <link rel="import" href="../card-text-w-comments.html">
 
   <custom-style>
@@ -22,17 +19,8 @@
 
 <body>
   <div class="vertical-section-container centered">
-    <h3>Basic card-text-w-comments demo</h3>
-    <demo-snippet>
-      <template>
-        <div style="width:400px;border:1px solid #ccc;margin:25px 0;padding:5px;">
-          <card-text-w-comments-composer></card-text-w-comments-composer>
-        </div>
-        <div style="width:400px;border:1px solid #ccc;margin:25px 0;padding:5px;">
-          <card-text-w-comments-viewer></card-text-w-comments-viewer>
-        </div>
-      </template>
-    </demo-snippet>
+    <h3>card-text-w-comments demo</h3>
+    <channels-card-demo-helper composer-tag-name="card-text-w-comments-composer" viewer-tag-name="card-text-w-comments-viewer"></channels-card-demo-helper>
   </div>
 </body>
 
